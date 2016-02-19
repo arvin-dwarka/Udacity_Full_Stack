@@ -6,4 +6,13 @@
 -- You can write comments in this file by starting them with two dashes, like
 -- these lines here.
 
+CREATE TABLE Players (
+    id SERIAL PRIMARY KEY,
+    name varchar(225)
+);
+
+CREATE TABLE Matches (
+    winner int REFERENCES Players(id),
+    loser int REFERENCES Players(id)
+);
 

@@ -11,16 +11,42 @@ def connect():
     return psycopg2.connect("dbname=tournament")
 
 
+def updateDatabse(*args):
+    """Helper function that connects to the database, gets a cursor, execute 
+    the update commands, and then commits the changes and closes the 
+    connection."""
+    db = connect()
+    c = db.cursor()
+    c.execute(*args)
+    db.commit()
+    db.close()
+
+
+def queryDatabse(*args):
+    """Helper function that connects to the database, gets a cursor, execute 
+    the query command (cmd), and then commits the changes and closes the 
+    connection."""
+    db = connect()
+    c = db.cursor()
+    c.execute(*args)
+    query = c.fetchall()
+    db.close()
+    return query
+
+
 def deleteMatches():
     """Remove all the match records from the database."""
+    updateDatabse('DELETE FROM Matches;')
 
 
 def deletePlayers():
     """Remove all the player records from the database."""
+    updateDatabse('DELETE FROM Players;')
 
 
 def countPlayers():
     """Returns the number of players currently registered."""
+    return queryDatabse('SELECT COUNT(*) FROM Players;')[0][0]
 
 
 def registerPlayer(name):
@@ -32,6 +58,7 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
+    updateDatabse('INSERT INTO Players (name) VALUES (%s);', (name,))
 
 
 def playerStandings():
@@ -47,6 +74,32 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
+    # create sub query to calculate the number of wins and losses for use 
+    # in main query as total mathces played
+    sub_query = '''
+    SELECT Players.id, Players.name, count({winner_or_loser}) as {wins_or_losses}
+    FROM Players left join Matches
+    ON Players.id = {winner_or_loser}
+    GROUP BY Players.id
+    '''
+    
+    # main query to return player standings sorted by wins
+    main_query = '''
+    SELECT Winners.id, Winners.name, Winners.wins, wins+losses as Played
+    FROM ({winners}) as Winners LEFT JOIN ({losers}) as Losers
+    ON Winners.id = Losers.id
+    ORDER BY Winners.wins DESC;
+    '''.format(
+        winners=sub_query.format(
+            winner_or_loser='winner',
+            wins_or_losses='wins'
+            ),
+        losers=sub_query.format(
+            winner_or_loser='loser',
+            wins_or_losses='losses'
+            )
+        )
+    return queryDatabse(main_query)
 
 
 def reportMatch(winner, loser):
@@ -56,6 +109,7 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
+    updateDatabse('INSERT INTO Matches VALUES (%s, %s);', (winner, loser))
  
  
 def swissPairings():
@@ -73,5 +127,10 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+    # query the player standings to get the current list of entries
+    entry = [(player[0], player[1]) for player in playerStandings()]
 
+    # pair each player with an adjescent player from the entry list
+    return [(entry[i][0], entry[i][1], entry[i+1][0], entry[i+1][1]) 
+        for i in xrange(0, len(entry), 2)]
 
