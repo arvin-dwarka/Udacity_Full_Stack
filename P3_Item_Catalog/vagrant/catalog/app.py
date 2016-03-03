@@ -46,6 +46,30 @@ def showCocktails(category_id):
         category_id=category_id).all() 
     return render_template('cocktails.html', cocktails=cocktails)
 
+
+
+@app.route('/category/JSON')
+def JSONCategories():
+    """ Return categories in JSON format """
+    categories = session.query(Category).all()
+    return jsonify(Categories=[i.serialize for i in categories])
+
+
+@app.route('/category/<int:category_id>/cocktails/JSON')
+def JSONCocktails(category_id):
+    """ Return all apps from a category in JSON format """
+    cocktails = session.query(Cocktails).filter_by(category_id=category_id).all()
+    return jsonify(Cocktails=[i.serialize for i in cocktails])
+
+
+@app.route('/category/<int:category_id>/cocktails/<int:cocktail_id>/JSON')
+def JSONSingleCocktail(category_id, cocktail_id):
+    """ Return details of a single app in JSON format """
+    cocktail = session.query(Cocktails).filter_by(id=cocktail_id).one()
+    return jsonify(Cocktail=cocktail.serialize)
+
+
+
 if __name__ == '__main__':
     app.debug = True
     app.run(host = '0.0.0.0', port = 5000)
