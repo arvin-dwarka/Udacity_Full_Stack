@@ -1,10 +1,10 @@
 import os
 import urlparse
 import json
-import random
 import httplib2
 import requests
 import string
+import random
 from database_setup import Base, Category, Cocktails, User
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
 from flask import session as login_session
@@ -33,7 +33,8 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
-# Login functions
+## Login functions
+# Generate a login page
 @app.route('/login')
 def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
@@ -42,6 +43,7 @@ def showLogin():
     # return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state)
 
+# Google Plus signin
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     """
@@ -128,6 +130,7 @@ def gconnect():
     output = 'Login Successful.'
     return output
 
+# Facebook signin
 @app.route('/fbconnect', methods=['POST'])
 def fbconnect():
     """
@@ -190,6 +193,7 @@ def fbconnect():
     output = 'Login Successful.'
     return output
 
+# Logout form Google Plus
 @app.route('/gdisconnect')
 def gdisconnect():
     """
@@ -215,6 +219,7 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
+# Logout of Facebook
 @app.route('/fbdisconnect')
 def fbdisconnect():
     """
@@ -257,8 +262,11 @@ def disconnect():
         flash("You were not logged in") 
         return redirect(url_for('showCategories')) 
 
+# Create a new user after login
 def createUser(login_session):
-    """ Helper to create User object in the database """
+    """
+    Helper to create User object in the database
+    """
     
     newUser = User(name=login_session['username'], email=login_session[
                    'email'], picture=login_session['picture'])
@@ -267,23 +275,26 @@ def createUser(login_session):
     user = session.query(User).filter_by(email=login_session['email']).one()
     return user.id
 
-
+# Fetch user data after login
 def getUserInfo(user_id):
-    """ Query database for user info"""
-    
+    """
+    Query database for user info
+    """
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
-
+# Fetch user id after login
 def getUserID(email):
-    """ Get user ID from provided e-mail address """
+    """
+    Get user ID from provided e-mail address
+    """
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
     except:
         return None
 
-# Main logic
+## Main logic
 # Show all available categories
 @app.route('/')
 @app.route('/category/')
