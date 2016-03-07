@@ -1,0 +1,31 @@
+{% extends "main.html" %}
+{% block content %}
+{% include "header.html" %}
+
+<div class="container">
+    <div class="page-header">
+        <figure class="creator">
+            <img src="{{user.picture}}">
+            <figcaption>Owned by: {{user.name}}</figcaption>
+        </figure>
+        <h1 class="pull-left">{{category.name}}</h1>
+        <div class="clearfix"></div>
+    </div>
+    <div class = "row">
+        <div class="col-md-12">
+            <ul class="list-group">
+                {% for i in cocktails %}
+                    <li class="list-group-item">
+                        <h3 class="list-group-item-heading">
+                            {{i.name}}
+                            <span class="pull-right">${{i.price}}</span>
+                        </h3>
+                        <p class="list-group-item-text">{{i.description}}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

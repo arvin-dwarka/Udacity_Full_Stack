@@ -1,0 +1,16 @@
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header col-lg-12" aria-expanded="true">
+      <a class="navbar-brand" href="/" aria-label="Left Align">Cocktails
+        <span class="glyphicon glyphicon-glass" aria-hidden="true"></span>
+      </a>
+      <button type="button" class="navbar-right btn btn-default navbar-btn">
+          {%if 'username' not in session %}
+          <a href="{{url_for('showLogin')}}">Sign In</a>
+          {% else %}
+          <a href="{{url_for('disconnect')}}">Logout </a>
+          {% endif %}
+      </button>
+    </div>
+  </div>
+</nav>

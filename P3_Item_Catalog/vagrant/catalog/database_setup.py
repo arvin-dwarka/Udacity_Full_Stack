@@ -29,7 +29,7 @@ class Category(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
-    creator_id = Column(Integer, ForeignKey('user.id'))
+    user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
     cocktails = relationship('Cocktails', cascade="all, delete-orphan")
 
@@ -37,22 +37,22 @@ class Category(Base):
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {
-            'name': self.name,
             'id': self.id,
+            'name': self.name
         }
 
 
 class Cocktails(Base):
     """
-    The core class for our application. Contains all of the detailed information for each app item.
+    The core class for our application. Contains all of the detailed 
+    information for each app item.
     Includes:
-    - Name
-    - ID 
-    - Publisher 
+    - ID
+    - Name  
     - Description 
     - Price
     - Category
-    - Creator
+    - User
     """
     __tablename__ = 'cocktails'
 
@@ -62,22 +62,23 @@ class Cocktails(Base):
     price = Column(String(8))
     category_id = Column(Integer, ForeignKey('category.id'))
     category = relationship(Category)
-    creator_id = Column(Integer, ForeignKey('user.id'))
+    user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
 
     @property
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {
+            'id': self.id,
             'name': self.name,
             'description': self.description,
-            'id': self.id,
-            'price': self.price,
+            'price': self.price
         }
 
 urlparse.uses_netloc.append("postgres")
 # Gets DB variable from Heroku. If no DBURL is present, uses local appreview.db
 dburl = urlparse.urlparse(os.getenv("DATABASE_URL", "/cocktailsdb"))
-engine = create_engine('postgresql+psycopg2://%s/%s' % (dburl.netloc, dburl.path[1:]))
+engine = create_engine('postgresql+psycopg2://%s/%s' % 
+    (dburl.netloc, dburl.path[1:]))
 
 Base.metadata.create_all(engine)

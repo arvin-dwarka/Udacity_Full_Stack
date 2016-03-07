@@ -22,11 +22,11 @@ user1 = User(id=1,name='Arvin', email='arvin.dwarka@gmail.com')
 session.add(user1)
 session.commit()
 
-cat1 = Category(id=1,name='Boozy', creator_id=1)
+cat1 = Category(id=1,name='Boozy', user_id=1)
 session.add(cat1)
 session.commit()
 
-ct1 = Cocktails(name='Navy Rations', description='XO Rum, Punt e Mes, House Cherry Brandy, Absinthe', price='13', category_id=1, creator_id=1)
+ct1 = Cocktails(name='Navy Rations', description='XO Rum, Punt e Mes, House Cherry Brandy, Absinthe', price='13', category_id=1, user_id=1)
 session.add(ct1)
 session.commit()
 
