@@ -1,0 +1,9 @@
+Flask==0.9
+Werkzeug==0.8.3
+Jinja2==2.7.2
+SQLAlchemy==0.8.4
+requests==2.2.1
+oauth2client==1.4.12
+httplib2==0.9.1
+psycopg2==2.4.5
+dict2xml==1.3

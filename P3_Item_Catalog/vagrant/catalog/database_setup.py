@@ -76,7 +76,7 @@ class Cocktails(Base):
         }
 
 urlparse.uses_netloc.append("postgres")
-# Gets DB variable from Heroku. If no DBURL is present, uses local appreview.db
+# Gets DB variable from Heroku. If no DBURL is present, uses local database
 dburl = urlparse.urlparse(os.getenv("DATABASE_URL", "/cocktailsdb"))
 engine = create_engine('postgresql+psycopg2://%s/%s' % 
     (dburl.netloc, dburl.path[1:]))

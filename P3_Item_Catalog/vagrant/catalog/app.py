@@ -19,7 +19,7 @@ app = Flask(__name__)
 
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
-APPLICATION_NAME = "Coktail App"
+APPLICATION_NAME = "cocktails-app"
 
 
 # Connect to Database and create database session
@@ -501,4 +501,5 @@ def JSONSingleCocktail(category_id, cocktail_id):
 if __name__ == '__main__':
     app.secret_key = 'weoaAWJpB9i9hA'
     app.debug = True
+    # app.run(host='0.0.0.0', port=os.getenv("PORT", 80))
     app.run(host = '0.0.0.0', port = 5000)
