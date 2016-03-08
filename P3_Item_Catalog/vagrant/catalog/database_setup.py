@@ -11,7 +11,7 @@ Base = declarative_base()
 
 class User(Base):
     """
-    User class for all users in the database.
+    User class to capture all necessary user info.
     """
     __tablename__ = 'user'
 
@@ -23,7 +23,7 @@ class User(Base):
 
 class Category(Base):
     """
-    Category class which identifies a name and the category's creator.
+    Category class that is related to User and Cocktails table.
     """
     __tablename__ = 'category'
 
@@ -44,9 +44,7 @@ class Category(Base):
 
 class Cocktails(Base):
     """
-    The core class for our application. Contains all of the detailed 
-    information for each app item.
-    Includes:
+    Cocktails class that contains all the details on a drink:
     - ID
     - Name  
     - Description 
@@ -67,7 +65,9 @@ class Cocktails(Base):
 
     @property
     def serialize(self):
-        """Return object data in easily serializeable format"""
+        """
+        Return object data in serializeable format
+        """
         return {
             'id': self.id,
             'name': self.name,

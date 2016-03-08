@@ -6,9 +6,9 @@ import requests
 import string
 import random
 from database_setup import Base, Category, Cocktails, User
-from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
+from flask import Flask, render_template, request, redirect, jsonify
 from flask import session as login_session
-from flask import make_response
+from flask import make_response, url_for, flash
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from oauth2client.client import flow_from_clientsecrets
@@ -125,7 +125,7 @@ def gconnect():
     if not user_id:
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
-    
+
     flash("You are now logged in as %s" % login_session['username'])
     output = 'Login Successful.'
     return output
@@ -163,7 +163,7 @@ def fbconnect():
     data = json.loads(result)
     print url, "\n"
     print data, "\n"
-    
+
     # Populate user data into login_session object
     login_session['provider'] = 'facebook'
     login_session['username'] = data["name"]
@@ -236,7 +236,7 @@ def fbdisconnect():
     return "You have been logged out"
 
 # Disconnect based on provider 
-@app.route('/disconnect') 
+@app.route('/disconnect')
 def disconnect(): 
     """
     Execute disconnect from app based on current provider.
@@ -371,8 +371,8 @@ def deleteCategory(category_id):
         return render_template('delete_category.html', category=del_cat) 
 
 # Show all cocktails within a category
-@app.route('/category/<int:category_id>/') 
-@app.route('/category/<int:category_id>/cocktails/') 
+@app.route('/category/<int:category_id>/')
+@app.route('/category/<int:category_id>/cocktails/')
 def showCocktails(category_id): 
     """
     GET: Gets a list of cocktails within a category.
@@ -391,7 +391,7 @@ def showCocktails(category_id):
             cocktails=cocktails, user=user)
 
 # Create new cocktails drinks
-@app.route('/category/<int:category_id>/apps/new/', methods=['GET', 'POST']) 
+@app.route('/category/<int:category_id>/apps/new/', methods=['GET', 'POST'])
 def newCocktail(category_id): 
     """
     GET: Renders new cocktail page if user is logged in.
@@ -417,7 +417,7 @@ def newCocktail(category_id):
         return render_template('new_cocktail.html', category_id=category_id)
 
 # Edit a cocktail
-@app.route('/category/<int:category_id>/cocktails/<int:cocktails_id>/edit', methods=['GET', 'POST']) 
+@app.route('/category/<int:category_id>/cocktails/<int:cocktails_id>/edit', methods=['GET', 'POST'])
 def editCocktail(category_id, cocktails_id): 
     """
     GET: Opens edit page for cocktail_id if user is logged in.
@@ -450,7 +450,7 @@ def editCocktail(category_id, cocktails_id):
             cocktails_id=cocktails_id, cocktail=edit_cocktail) 
 
 # Delete a cocktail
-@app.route('/category/<int:category_id>/cocktails/<int:cocktails_id>/delete', methods=['GET', 'POST']) 
+@app.route('/category/<int:category_id>/cocktails/<int:cocktails_id>/delete', methods=['GET', 'POST'])
 def deleteCocktail(category_id, cocktails_id): 
     """
     GET: Redenders delete page for a cocktail if user is logged in.
@@ -499,7 +499,7 @@ def JSONSingleCocktail(category_id, cocktail_id):
     return jsonify(Cocktail=cocktail.serialize)
 
 if __name__ == '__main__':
-    app.secret_key = 'weoaAWJpB9i9hA'
-    app.debug = True
+    app.secret_key='weoaAWJpB9i9hA'
+    app.debug=True
     # app.run(host='0.0.0.0', port=os.getenv("PORT", 80))
-    app.run(host = '0.0.0.0', port = 5000)
+    app.run(host='0.0.0.0', port=5000)
