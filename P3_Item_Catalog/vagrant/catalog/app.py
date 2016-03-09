@@ -334,9 +334,9 @@ def editCategory(category_id):
     GET: Opens category edit page for category_id if user is logged in.
     POST: Modifies category based on form and commits to the database.
     """
-    edit_cat = session.query(Category).filter_by(id=category_id).one()
     if 'username' not in login_session:
         return redirect('login')
+    edit_cat = session.query(Category).filter_by(id=category_id).one()
     if edit_cat.user_id != login_session['user_id']:
         return "<script>function myFunction() {alert('Unauthorized!" \
                "Create your own categories by logging in!');}</script>" \
@@ -356,9 +356,9 @@ def deleteCategory(category_id):
     GET: Gets delete category page for category_id if user is logged in.
     POST: Deletes category from database and commits change.
     """
-    del_cat = session.query(Category).filter_by(id=category_id).one() 
     if 'username' not in login_session: 
         return redirect('/login') 
+    del_cat = session.query(Category).filter_by(id=category_id).one()
     if del_cat.user_id != login_session['user_id']: 
         return "<script>function myFunction() {alert('You are not authorized to delete this category. " \
                "Please create your own category in order to delete.');}</script><body onload='myFunction()''>"
@@ -497,6 +497,43 @@ def JSONSingleCocktail(category_id, cocktail_id):
     """
     cocktail = session.query(Cocktails).filter_by(id=cocktail_id).one()
     return jsonify(Cocktail=cocktail.serialize)
+
+# Make XML endpoints available for all categories
+@app.route('/category/XML')
+def XMLCategories():
+    """
+    Show all categories in XML format
+    """
+    categories = session.query(Category).all()
+    data = xmlify([i.serialize for i in categories], wrap="category", indent="  ")
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + xmlify(data, wrap="categories")
+    response = make_response(xml)
+    response.mimetype = 'text/xml'
+    return response
+
+# Make XML endpoints available for all cocktails within a category
+@app.route('/category/<int:category_id>/cocktails/XML')
+def XMLCocktails(category_id):
+    """
+    Return all cocktails within a category in XML format
+    """
+    cocktails = session.query(Cocktails).filter_by(category_id=category_id).all()
+    data = xmlify([i.serialize for i in cocktails], wrap="cocktails", indent="  ")
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + xmlify(data, wrap="category")
+    response = make_response(xml)
+    response.mimetype = 'text/xml'
+    return response
+
+# Make XML endpoints available for a particular cocktail within a category
+@app.route('/category/<int:category_id>/cocktails/<int:cocktails_id>/XML')
+def XMLCocktail(category_id, cocktails_id):
+    """ Return details of a single cocktail in XML format """
+    cocktail = session.query(Cocktails).filter_by(id=cocktails_id).one()
+    data = xmlify(cocktail.serialize, wrap="cocktail", indent="  ")
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + data
+    response = make_response(xml)
+    response.mimetype = 'text/xml'
+    return response
 
 if __name__ == '__main__':
     app.secret_key='weoaAWJpB9i9hA'
