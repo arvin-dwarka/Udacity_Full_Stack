@@ -6,6 +6,7 @@ import requests
 import string
 import random
 from database_setup import Base, Category, Cocktails, User
+from dict2xml import dict2xml
 from flask import Flask, render_template, request, redirect, jsonify
 from flask import session as login_session
 from flask import make_response, url_for, flash
@@ -505,8 +506,8 @@ def XMLCategories():
     Show all categories in XML format
     """
     categories = session.query(Category).all()
-    data = xmlify([i.serialize for i in categories], wrap="category", indent="  ")
-    xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + xmlify(data, wrap="categories")
+    data = dict2xml([i.serialize for i in categories], wrap="category", indent="  ")
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + dict2xml(data, wrap="categories")
     response = make_response(xml)
     response.mimetype = 'text/xml'
     return response
@@ -518,8 +519,8 @@ def XMLCocktails(category_id):
     Return all cocktails within a category in XML format
     """
     cocktails = session.query(Cocktails).filter_by(category_id=category_id).all()
-    data = xmlify([i.serialize for i in cocktails], wrap="cocktails", indent="  ")
-    xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + xmlify(data, wrap="category")
+    data = dict2xml([i.serialize for i in cocktails], wrap="cocktails", indent="  ")
+    xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + dict2xml(data, wrap="category")
     response = make_response(xml)
     response.mimetype = 'text/xml'
     return response
@@ -529,7 +530,7 @@ def XMLCocktails(category_id):
 def XMLCocktail(category_id, cocktails_id):
     """ Return details of a single cocktail in XML format """
     cocktail = session.query(Cocktails).filter_by(id=cocktails_id).one()
-    data = xmlify(cocktail.serialize, wrap="cocktail", indent="  ")
+    data = dict2xml(cocktail.serialize, wrap="cocktail", indent="  ")
     xml = '<?xml version="1.0" encoding="UTF-8"?>\n' + data
     response = make_response(xml)
     response.mimetype = 'text/xml'
