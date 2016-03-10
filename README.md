@@ -6,5 +6,5 @@ This repository contains projects for Udacity's Full Stack Nanodegree Program.
 - **P1** - Movie Trailer Website
 - **P2** - Tournament Results
 - **P3** - Item Catalog
-- **P4** - Conference Organization App
+- **P4** - Design a Game
 - **P5** - Linux Server Configuration
