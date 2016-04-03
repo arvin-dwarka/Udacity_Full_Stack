@@ -1,0 +1,13 @@
+What additional properties did you add to your models and why?
+
+1. Added move_histories in Game object. A history of recorded input sequences was creted as a pickle property. This enables users to easily query their previous moved using the get_game_history endpoint.
+
+2. Added a check_answer property to store the user's progress throughout the game. Each game consists of guessing a string of characters that make a word. The check_answer stores all correct guesses at the exact indexes of the word's characters. This can be used to check against duplicates and wrong attempts.
+
+3. Modified reminder emails Only send emails to users who have a game in-progress every 12 hours.
+
+What were some of the trade-offs or struggles you faced when implementing the new game logic?
+
+It was very difficult to understand how google app engine fit in this game design beyond the conference app project. But I was able to understand enough to get a simple game app going.
+
+On a more practical note, validating inputs and showing progress was a fair bit of struggle. Earlier versions of the hangman app seemed prone to common input errors, like double entries and duplicate entries. I solved these by creating appropriate validations, including a regular expression match. Communicating progress to the user was the second hurdle I faced. I over came this with the notion of breaking up a word into individual characters ordered by their indexes in the latter word.
