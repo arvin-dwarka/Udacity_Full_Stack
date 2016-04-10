@@ -44,7 +44,6 @@ class Game(ndb.Model):
   user = ndb.KeyProperty(required=True, kind='User')
   move_histories = ndb.PickleProperty()
 
-
   @classmethod
   def new_game(cls, user, answer, attempts):
     """Creates and returns a new game"""
@@ -65,6 +64,7 @@ class Game(ndb.Model):
     form.urlsafe_key = self.key.urlsafe()
     form.user_name = self.user.get().name
     form.attempts_remaining = self.attempts_remaining
+    form.check_answer = self.check_answer
     form.game_over = self.game_over
     form.message = message
     return form
@@ -100,6 +100,20 @@ class Score(ndb.Model):
                       )
 
 
+class UserForm(messages.Message):
+  """User Form"""
+  name = messages.StringField(1, required=True)
+  email = messages.StringField(2)
+  wins = messages.IntegerField(3, required=True)
+  total_played = messages.IntegerField(4, required=True)
+  win_percentage = messages.FloatField(5, required=True)
+
+
+class UserForms(messages.Message):
+  """Container for multiple User Forms"""
+  items = messages.MessageField(UserForm, 1, repeated=True)
+
+
 class GameForm(messages.Message):
   """GameForm for outbound game state information"""
   urlsafe_key = messages.StringField(1, required=True)
@@ -127,6 +141,11 @@ class MakeMoveForm(messages.Message):
   move = messages.StringField(2, required=True)
 
 
+class GameHistory(messages.Message):
+  """Game history"""
+  move = messages.StringField(1, required=True)
+
+
 class ScoreForm(messages.Message):
   """ScoreForm for outbound Score information"""
   user_name = messages.StringField(1, required=True)
@@ -143,23 +162,4 @@ class ScoreForms(messages.Message):
 class StringMessage(messages.Message):
   """StringMessage-- outbound (single) string message"""
   message = messages.StringField(1, required=True)
-
-
-class UserForm(messages.Message):
-  """User Form"""
-  name = messages.StringField(1, required=True)
-  email = messages.StringField(2)
-  wins = messages.IntegerField(3, required=True)
-  total_played = messages.IntegerField(4, required=True)
-  win_percentage = messages.FloatField(5, required=True)
-
-
-class UserForms(messages.Message):
-  """Container for multiple User Forms"""
-  items = messages.MessageField(UserForm, 1, repeated=True)
-
-
-class GameHistory(messages.Message):
-  """Game history"""
-  move = messages.StringField(1, required=True)
 

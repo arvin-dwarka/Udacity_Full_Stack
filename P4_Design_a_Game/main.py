@@ -13,8 +13,8 @@ from models import User, Game
 
 class SendReminderEmail(webapp2.RequestHandler):
   def get(self):
-    """Send a reminder email to each User with an email about games.
-    Called every hour using a cron job"""
+    """Send a reminder email to each User about games in progress.
+    Called every 12 hours using a cron job"""
     app_id = app_identity.get_application_id()
     games = Game.query(Game.game_over == False)
     for game in games:

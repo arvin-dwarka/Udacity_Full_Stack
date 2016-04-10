@@ -14,15 +14,15 @@ This project is a cloud-based API server of a Hangman game. The player needs to 
  Deploy your application. 
  
  
-##Game Description:
-Hnagman is a simple word guessing game. Each game begins with a random 'answer'
+## Game Description:
+Hangman is a simple word guessing game. Each game begins with a random 'answer'
 word, and a maximum number of 'attempts'. 'Attempts' are sent to the `make_move` endpoint which will reply
 with either: 'correct', 'try again', 'you win', or 'game over' (if the maximum
 number of attempts is reached).
 Each game can be retrieved or played by using the path parameter
 `urlsafe_game_key`.
 
-##Files Included:
+## Files Included:
  - api.py: Contains endpoints and game playing logic.
  - app.yaml: App configuration.
  - cron.yaml: Cronjob configuration.
@@ -31,7 +31,7 @@ Each game can be retrieved or played by using the path parameter
  - utils.py: Helper function for retrieving ndb.Models by urlsafe Key string.
  - settings.py: Web client ID for Google Cloud Platform
 
-##Endpoints Included:
+## Endpoints Included:
  - **create_user**
     - Path: 'user'
     - Method: POST
@@ -119,9 +119,9 @@ Each game can be retrieved or played by using the path parameter
     - Description: Return user's move history for the game with message and guess.
     Will raise a NotFoundException if there's no game matching the url safe key in the datastore.
 
-##Models Included:
+## Models Included:
  - **User**
-    - Stores unique user_name and (optional) email address.
+    - Stores unique user_name and email address.
     
  - **Game**
     - Stores unique game states. Associated with User model via KeyProperty.
@@ -129,7 +129,7 @@ Each game can be retrieved or played by using the path parameter
  - **Score**
     - Records completed games. Associated with Users model via KeyProperty.
     
-##Forms Included:
+## Forms Included:
  - **GameForm**
     - Representation of a Game's state (urlsafe_key, attempts_remaining,
     game_over flag, message, user_name).

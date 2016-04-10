@@ -68,10 +68,10 @@ class HangmanApi(remote.Service):
   def get_game(self, request):
     """Return a current game state."""
     game = get_by_urlsafe(request.urlsafe_game_key, Game)
-    if game and game.game_over is not True:
+    if game and not game.game_over:
       return game.to_form('Time to make a move! {} left'.
                           format(game.attempts_remaining))
-    elif game.game_over:
+    elif game and game.game_over:
       return game.to_form('Game is over')
     else:
       raise endpoints.NotFoundException('Game not found!')
@@ -90,22 +90,23 @@ class HangmanApi(remote.Service):
     if game.game_over:
       raise endpoints.NotFoundException('Game is over')
     # fetch user data and check if valid
-    user = User.query(User.name == request.user_name).get()
+    user = Game.query(Game.user == request.user_name).get()
     if not user:
       raise endpoints.NotFoundException('The user does not exist!')
     # validate user input
-    assert re.match("^[A-Za-z]$", request.move), 'You can only enter 1 letter!'
+    if not re.match("^[A-Za-z]$", request.move):
+      raise endpoints.BadRequestException('You can only enter 1 letter!')
     # validate move played
     if request.move in game.check_answer:
       return game.to_form('You already played {}'.format(request.move))
     # wrong move attemp logic
-    if request.move not in game.answer:
+    if request.move.lower() not in game.answer.lower():
         game.attempts_remaining -= 1
         if game.attempts_remaining < 1:
           user.total_played += 1
           game.end_game(False)
           msg = 'Game Over, you lose!'
-        if game.attempts_remaining = 1:
+        if game.attempts_remaining == 1:
           msg = 'Try again, last move!'
         if game.attempts_remaining > 1:
           msg = 'Try again, {} moves left!'.format(game.attempts_remaining)
@@ -124,7 +125,7 @@ class HangmanApi(remote.Service):
         msg = 'Correct! You have: {}'.format(game.check_answer)
     # log moves to generate history
     game.move_histories.append(
-                          ["{},".format(request.move) + "{}".format(msg)]
+                          ["{},".format(request.move.lower()) + "{}".format(msg)]
                           )
     game.put()
     user.put()
@@ -190,7 +191,7 @@ class HangmanApi(remote.Service):
                     name='get_high_wins',
                     http_method='GET')
   def get_high_scores(self, request):
-    """Get user high scores"""
+    """Rank player based on the number of their wins"""
     users = User.query().order(User.wins)
     if not users:
       raise endpoints.NotFoundException('No users found!')
@@ -202,7 +203,7 @@ class HangmanApi(remote.Service):
                     name='get_user_ranking',
                     http_method='GET')
   def get_user_ranking(self, request):
-      """Get user ranking"""
+      """Rank player based on their win percentage"""
       users = User.query(User.total_played > 0).fetch()
       if not users:
           raise endpoints.NotFoundException('The user does not exist!')
