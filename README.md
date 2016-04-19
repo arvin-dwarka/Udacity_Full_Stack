@@ -1,3 +1,6 @@
+![Certificate](https://raw.githubusercontent.com/arvin-dwarka/Udacity_Full_Stack/master/certificate.png)
+
+
 # Udacity Full Stack
 
 This repository contains projects for Udacity's Full Stack Nanodegree Program.
